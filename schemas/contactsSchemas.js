@@ -19,3 +19,7 @@ export const updateContactSchema = Joi.object({
     email: Joi.string().email({ tlds: { allow: false } }),
     phone: Joi.string().regex(/^[0-9]{10}$/)
 }).options({ stripUnknown: true, abortEarly: false });
+
+export const updateFavoriteSchema = Joi.object({
+    favorite: Joi.boolean().required(),
+  });

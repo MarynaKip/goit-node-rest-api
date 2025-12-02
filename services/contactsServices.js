@@ -1,51 +1,38 @@
-import * as fs from "node:fs/promises"
-import * as path from "node:path"
-import { nanoid } from "nanoid";
+import Contact from "../db/models/contacts.js";
 
-const contactsPath = path.resolve("db", "contacts.json")
-
-async function updateContacts(contacts) {
-    fs.writeFile(contactsPath, JSON.stringify(contacts))
-}
 
 export async function listContacts() {
-    const data = await fs.readFile(contactsPath, "utf-8")
-    return JSON.parse(data)
+    return Contact.findAll()
 }
-  
+
 export async function getContactById(contactId) {
-    const contacts = await listContacts()
-    const result = contacts.find(({id}) => id === contactId)
-    return result || null
+    return Contact.findByPk(contactId);
 }
   
 export async function removeContact(contactId) {
-    const contacts = await listContacts()
-    const contactIndex = contacts.findIndex(({id}) => id === contactId)
-    if(contactIndex === -1) return null
-    const [result] = contacts.splice(contactIndex, 1)
-    await updateContacts(contacts)
-    return result || null
-}
+    const contact = await Contact.findByPk(contactId);
+    if (!contact) return null;
   
-export async function addContact(name, email, phone) {
-    const contacts = await listContacts()
-    const newContact = {
-        id: nanoid(),
-        name,
-        email,
-        phone
-    }
-    contacts.push(newContact)
-    await updateContacts(contacts)
-    return newContact
+    await contact.destroy();
+    return contact;
+}
+    
+export async function addContact(payload) {
+    return Contact.create(payload);
 }
 
 export async function updateContact(contactId, payload) {
-    const contacts = await listContacts();
-    const contactIndex = contacts.findIndex(({id}) => id === contactId);
-    if(contactIndex === -1) return null;
-    contacts[contactIndex] = {...contacts[contactIndex], ...payload};
-    await updateContacts(contacts);
-    return contacts[contactIndex];
-}
+    const contact = await Contact.findByPk(contactId);
+    if (!contact) return null;
+  
+    await contact.update(payload);
+    return contact;
+  }
+
+  export async function updateStatusContact(contactId, payload) {
+    const contact = await Contact.findByPk(contactId);
+    if (!contact) return null;
+  
+    await contact.update(payload);
+    return contact;
+  }
