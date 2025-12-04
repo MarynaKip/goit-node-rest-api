@@ -4,6 +4,8 @@ import cors from "cors";
 
 import connectDatabase from "./db/connectDatabase.js";
 import contactsRouter from "./routes/contactsRouter.js";
+import authRouter from "./routes/authRouter.js";
+import { UniqueConstraintError } from "sequelize";
 
 const app = express();
 
@@ -12,12 +14,16 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/contacts", contactsRouter);
+app.use("/api/auth", authRouter);
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
 app.use((err, req, res, next) => {
+  if(err instanceof UniqueConstraintError) {
+    err.status = 409
+  }
   const { status = 500, message = "Server error" } = err;
   res.status(status).json({ message });
 });
