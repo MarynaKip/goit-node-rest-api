@@ -1,5 +1,5 @@
 import ctrlWrapper from "../helpers/ctrlWrapper.js"
-import { registerUser, loginUser, refreshUser, logoutUser } from "../services/authServices.js"
+import { registerUser, loginUser, refreshUser, logoutUser, uploadAvatar } from "../services/authServices.js"
 
 export const registerController = ctrlWrapper(async(req, res) => {
     const newUser = await registerUser(req.body)
@@ -26,5 +26,12 @@ export const logoutController = ctrlWrapper(
     async(req, res) => {
         await logoutUser(req.user);
         res.status(204).send()
+    }
+)
+
+export const uploadAvatarController = ctrlWrapper(
+    async(req, res) => {
+        const url = await uploadAvatar(req.user, req.file);
+        res.json(url)
     }
 )
