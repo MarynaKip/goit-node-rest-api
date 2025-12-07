@@ -1,11 +1,12 @@
 import ctrlWrapper from "../helpers/ctrlWrapper.js"
-import { registerUser, loginUser, refreshUser, logoutUser, uploadAvatar } from "../services/authServices.js"
+import { registerUser, loginUser, getCurrent, logoutUser, uploadAvatar } from "../services/authServices.js"
 
 export const registerController = ctrlWrapper(async(req, res) => {
     const newUser = await registerUser(req.body)
     res.status(201).json({
         email: newUser.email,
-        subscription: newUser.subscription
+        subscription: newUser.subscription,
+        avatarURL: newUser.avatarURL
     })
 })
 
@@ -17,7 +18,7 @@ export const loginController = ctrlWrapper(async(req, res) => {
 
 export const getCurrentController = ctrlWrapper(
     async(req, res) => {
-        const result = await refreshUser(req.user)
+        const result = await getCurrent(req.user)
         res.json(result)
     }
 )

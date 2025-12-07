@@ -39,16 +39,12 @@ export const loginUser = async ({ email, password }) => {
     };
 };
 
-export const refreshUser = async user => {
-    const token = createToken({id: user.id});
-
-    await user.update({ token });
+export const getCurrent = async user => {
+    await findUser({ email: user.email });
     return {
-        token,
-        user: {
-            email: user.email,
-            subscription: user.subscription,
-        },
+        email: user.email,
+        subscription: user.subscription,
+        avatarURL: user.avatarURL
     };
 
 }
