@@ -1,5 +1,5 @@
 import ctrlWrapper from "../helpers/ctrlWrapper.js"
-import { registerUser, loginUser, getCurrent, logoutUser, uploadAvatar } from "../services/authServices.js"
+import { registerUser, loginUser, getCurrent, logoutUser, uploadAvatar, verifyUser, resendVerifyUser } from "../services/authServices.js"
 
 export const registerController = ctrlWrapper(async(req, res) => {
     const newUser = await registerUser(req.body)
@@ -34,5 +34,23 @@ export const uploadAvatarController = ctrlWrapper(
     async(req, res) => {
         const url = await uploadAvatar(req.user, req.file);
         res.json(url)
+    }
+)
+
+export const verifyController = ctrlWrapper(
+    async(req, res) => {
+        const {verificationToken} = req.params;
+        await verifyUser(verificationToken)
+        res.json({message: "Verification successful"})
+    }
+)
+
+export const resendVerifyController = ctrlWrapper(
+    async(req, res) => {
+        await resendVerifyUser(req.body)
+
+        res.json({
+            message: "Verification email sent"
+        })
     }
 )
